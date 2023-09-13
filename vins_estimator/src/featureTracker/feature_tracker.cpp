@@ -250,8 +250,11 @@ map<int, vector<pair<int, Eigen::Matrix<double, 7, 1>>>> FeatureTracker::trackIm
         }
         prev_un_right_pts_map = cur_un_right_pts_map;
     }
-    if(SHOW_TRACK)
-        drawTrack(cur_img, rightImg, ids, cur_pts, cur_right_pts, prevLeftPtsMap);
+
+    static cv::Mat last_left_img;
+    if(SHOW_TRACK && !last_left_img.empty())
+        drawTrack(cur_img, last_left_img, ids, cur_pts, cur_right_pts, prevLeftPtsMap);
+    last_left_img = cur_img.clone();
 
     prev_img = cur_img;
     prev_pts = cur_pts;
@@ -502,17 +505,17 @@ void FeatureTracker::drawTrack(const cv::Mat &imLeft, const cv::Mat &imRight,
         }
     }
 
-    if (!imRight.empty() && stereo_cam)
-    {
-        for (size_t i = 0; i < curRightPts.size(); i++)
-        {
-            cv::Point2f rightPt = curRightPts[i];
-            rightPt.x += cols;
-            cv::circle(imTrack, rightPt, 2, cv::Scalar(0, 255, 0), 2);
-            //cv::Point2f leftPt = curLeftPtsTrackRight[i];
-            //cv::line(imTrack, leftPt, rightPt, cv::Scalar(0, 255, 0), 1, 8, 0);
-        }
-    }
+    // if (!imRight.empty() && stereo_cam)
+    // {
+    //     for (size_t i = 0; i < curRightPts.size(); i++)
+    //     {
+    //         cv::Point2f rightPt = curRightPts[i];
+    //         rightPt.x += cols;
+    //         cv::circle(imTrack, rightPt, 2, cv::Scalar(0, 255, 0), 2);
+    //         //cv::Point2f leftPt = curLeftPtsTrackRight[i];
+    //         //cv::line(imTrack, leftPt, rightPt, cv::Scalar(0, 255, 0), 1, 8, 0);
+    //     }
+    // }
     
     map<int, cv::Point2f>::iterator mapIt;
     for (size_t i = 0; i < curLeftIds.size(); i++)
@@ -521,8 +524,12 @@ void FeatureTracker::drawTrack(const cv::Mat &imLeft, const cv::Mat &imRight,
         mapIt = prevLeftPtsMap.find(id);
         if(mapIt != prevLeftPtsMap.end())
         {
-            if(track_cnt[i] >= 5)
-                cv::arrowedLine(imTrack, curLeftPts[i], mapIt->second, cv::Scalar(0, 255, 0), 1, 8, 0, 0.2);
+            if(track_cnt[i] >= 5) {
+                cv::Point2f rightPt = mapIt->second;
+                rightPt.x += cols;
+                cv::arrowedLine(imTrack, curLeftPts[i], rightPt, cv::Scalar(0, 255, 0), 1, 8, 0, 0.0);
+                cv::circle(imTrack, rightPt, 2, cv::Scalar(0, 255, 0), 2);
+            }
         }
     }
 
