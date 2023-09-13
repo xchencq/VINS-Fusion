@@ -93,6 +93,7 @@ void Estimator::setCntService(ros::NodeHandle &nh) {
 bool Estimator::startEvalCallback(std_srvs::Empty::Request &request,
                                    std_srvs::Empty::Response &response) {
   featureTracker.start_cnt_flag_ = true;
+  featureTracker.start_time_ = ros::Time::now().toSec();
   return true;
 }
 

@@ -87,6 +87,7 @@ public:
 
     // avg tracked features
     bool start_cnt_flag_, end_cnt_flag_;
+    double start_time_;
     double avg_tracked_;
     int min_tracked_;
     int frames_cnt_;
