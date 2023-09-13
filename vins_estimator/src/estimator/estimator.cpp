@@ -83,6 +83,24 @@ void Estimator::clearState() {
 
   mProcess.unlock();
 }
+void Estimator::setCntService(ros::NodeHandle &nh) {
+  start_cnt_service_ = 
+      nh.advertiseService("/services/start_cnt", &Estimator::startEvalCallback, this);
+  end_cnt_service_ = 
+      nh.advertiseService("/services/end_cnt", &Estimator::endEvalCallback, this);
+}
+
+bool Estimator::startEvalCallback(std_srvs::Empty::Request &request,
+                                   std_srvs::Empty::Response &response) {
+  featureTracker.start_cnt_flag_ = true;
+  return true;
+}
+
+bool Estimator::endEvalCallback(std_srvs::Empty::Request &request,
+                                 std_srvs::Empty::Response &response) {
+  featureTracker.end_cnt_flag_ = true;
+  return true;
+}
 
 void Estimator::setParameter() {
   mProcess.lock();

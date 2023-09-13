@@ -2,10 +2,10 @@
 
 #common parameters
 #support: 1 imu 1 cam; 1 imu 2 cam: 2 cam; 
-imu: 1         
+imu: 0         
 num_of_cam: 2
 
-imu_topic: "/airsim_node/drone_1/imu/Imu"
+imu_topic: "/airsim_node/drone_1/imu/Imuxx"
 image0_topic: "/airsim_node/drone_1/front_center_custom/Scene"
 image1_topic: "/airsim_node/drone_1/front_center_custom_2/Scene"
 output_path: "/home/dji/output/"

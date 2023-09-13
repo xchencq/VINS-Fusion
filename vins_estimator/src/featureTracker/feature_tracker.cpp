@@ -50,6 +50,13 @@ FeatureTracker::FeatureTracker()
     stereo_cam = 0;
     n_id = 0;
     hasPrediction = false;
+
+    start_cnt_flag_ = false;
+    end_cnt_flag_ = false;
+    avg_tracked_ = 0.0;
+    min_tracked_ = 1000;
+    frames_cnt_ = 0;
+    written_ = false;
 }
 
 void FeatureTracker::setMask()
@@ -455,11 +462,46 @@ void FeatureTracker::drawTrack(const cv::Mat &imLeft, const cv::Mat &imRight,
         imTrack = imLeft.clone();
     cv::cvtColor(imTrack, imTrack, cv::COLOR_GRAY2RGB);
 
+    int tracked_feature_cnt = 0;
     for (size_t j = 0; j < curLeftPts.size(); j++)
     {
-        double len = std::min(1.0, 1.0 * track_cnt[j] / 20);
-        cv::circle(imTrack, curLeftPts[j], 2, cv::Scalar(255 * (1 - len), 0, 255 * len), 2);
+        // double len = std::min(1.0, 1.0 * track_cnt[j] / 20);
+        // cv::circle(imTrack, curLeftPts[j], 2, cv::Scalar(255 * (1 - len), 0, 255 * len), 2);
+        if(track_cnt[j] >= 5){
+            cv::circle(imTrack, curLeftPts[j], 2, cv::Scalar(0, 0, 255), 2);
+            tracked_feature_cnt++;
+        }
     }
+
+    if(start_cnt_flag_ && !end_cnt_flag_){
+        if(tracked_feature_cnt < min_tracked_) 
+            min_tracked_ = tracked_feature_cnt;
+
+        avg_tracked_ = (avg_tracked_ * frames_cnt_ + tracked_feature_cnt)/(double)(frames_cnt_+1);
+        frames_cnt_++;
+        ROS_INFO("avg_tracked: %f", avg_tracked_);
+        ROS_INFO("min_tracked: %d", min_tracked_);
+    }
+    if(start_cnt_flag_ && end_cnt_flag_){
+        ROS_WARN_ONCE("avg_tracked: %f", avg_tracked_);
+        ROS_WARN_ONCE("min_tracked: %d", min_tracked_);
+
+        // Write the evaluation result to txt
+        bool write_cumulative = false;
+        static bool writed = false;
+        if (write_cumulative && !writed) {
+            std::ofstream ofs("/home/cindy/Downloads/icra2024/ours/feature_cnt_ours_min5.txt",
+                                std::ios::app);
+            if (!ofs.is_open()) {
+                std::cerr << "Failed to open file: feature_cnt_cumulative.txt" << std::endl;
+                return;
+            }
+            ofs << "Avg: " << avg_tracked_ << ", Min: " << min_tracked_ << std::endl;
+            ofs.close();
+            writed = true;
+        }
+    }
+
     if (!imRight.empty() && stereo_cam)
     {
         for (size_t i = 0; i < curRightPts.size(); i++)
@@ -479,7 +521,8 @@ void FeatureTracker::drawTrack(const cv::Mat &imLeft, const cv::Mat &imRight,
         mapIt = prevLeftPtsMap.find(id);
         if(mapIt != prevLeftPtsMap.end())
         {
-            cv::arrowedLine(imTrack, curLeftPts[i], mapIt->second, cv::Scalar(0, 255, 0), 1, 8, 0, 0.2);
+            if(track_cnt[i] >= 5)
+                cv::arrowedLine(imTrack, curLeftPts[i], mapIt->second, cv::Scalar(0, 255, 0), 1, 8, 0, 0.2);
         }
     }
 

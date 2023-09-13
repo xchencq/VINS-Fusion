@@ -19,6 +19,8 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/types_c.h>
 #include <eigen3/Eigen/Dense>
+#include <std_msgs/Empty.h>
+#include <std_srvs/Empty.h>
 
 #include "camodocal/camera_models/CameraFactory.h"
 #include "camodocal/camera_models/CataCamera.h"
@@ -82,4 +84,11 @@ public:
     bool stereo_cam;
     int n_id;
     bool hasPrediction;
+
+    // avg tracked features
+    bool start_cnt_flag_, end_cnt_flag_;
+    double avg_tracked_;
+    int min_tracked_;
+    int frames_cnt_;
+    bool written_;
 };

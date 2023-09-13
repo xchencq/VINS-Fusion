@@ -174,4 +174,9 @@ class Estimator
 
     bool initFirstPoseFlag;
     bool initThreadFlag;
+
+    ros::ServiceServer start_cnt_service_, end_cnt_service_;
+    bool startEvalCallback(std_srvs::Empty::Request &request, std_srvs::Empty::Response &response);
+    bool endEvalCallback(std_srvs::Empty::Request &request, std_srvs::Empty::Response &response);
+    void setCntService(ros::NodeHandle &nh);
 };
