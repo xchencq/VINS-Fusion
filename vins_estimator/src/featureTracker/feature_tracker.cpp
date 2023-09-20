@@ -467,7 +467,7 @@ void FeatureTracker::drawTrack(const cv::Mat &imLeft, const cv::Mat &imRight,
     {
         // double len = std::min(1.0, 1.0 * track_cnt[j] / 20);
         // cv::circle(imTrack, curLeftPts[j], 2, cv::Scalar(255 * (1 - len), 0, 255 * len), 2);
-        if(track_cnt[j] >= 5){
+        if(track_cnt[j] >= 5){ // change to 5 frames 
             cv::circle(imTrack, curLeftPts[j], 2, cv::Scalar(0, 0, 255), 2);
             tracked_feature_cnt++;
         }
