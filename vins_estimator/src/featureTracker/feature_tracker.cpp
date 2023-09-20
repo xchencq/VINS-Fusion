@@ -467,7 +467,7 @@ void FeatureTracker::drawTrack(const cv::Mat &imLeft, const cv::Mat &imRight,
     {
         // double len = std::min(1.0, 1.0 * track_cnt[j] / 20);
         // cv::circle(imTrack, curLeftPts[j], 2, cv::Scalar(255 * (1 - len), 0, 255 * len), 2);
-        if(track_cnt[j] >= 2){
+        if(track_cnt[j] >= 5){
             cv::circle(imTrack, curLeftPts[j], 2, cv::Scalar(0, 0, 255), 2);
             tracked_feature_cnt++;
         }
@@ -478,10 +478,10 @@ void FeatureTracker::drawTrack(const cv::Mat &imLeft, const cv::Mat &imRight,
         double cur_t = ros::Time::now().toSec() - start_time_;
         bool write_plot = true;
         if (write_plot) {
-            std::ofstream ofs("/home/cindy/Downloads/icra2024/benchmark/feature_cnt_plot_bmk_min2.txt",
+            std::ofstream ofs("/home/cindy/Downloads/icra2024/benchmark/new_feature_plot_bmk_vel2.txt",
                                 std::ios::app);
             if (!ofs.is_open()) {
-                std::cerr << "Failed to open file: feature_cnt_plot_ours.txt" << std::endl;
+                std::cerr << "Failed to open file: feature_cnt_plot.txt" << std::endl;
                 return;
             }
             ofs << cur_t << "," << tracked_feature_cnt << std::endl;
@@ -504,7 +504,7 @@ void FeatureTracker::drawTrack(const cv::Mat &imLeft, const cv::Mat &imRight,
         bool write_cumulative = false;
         static bool writed = false;
         if (write_cumulative && !writed) {
-            std::ofstream ofs("/home/cindy/Downloads/icra2024/ours/feature_cnt_ours_min5.txt",
+            std::ofstream ofs("/home/cindy/Downloads/icra2024/pag/feature_cnt_pag_min5.txt",
                                 std::ios::app);
             if (!ofs.is_open()) {
                 std::cerr << "Failed to open file: feature_cnt_cumulative.txt" << std::endl;
