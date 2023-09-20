@@ -91,4 +91,5 @@ public:
     int min_tracked_;
     int frames_cnt_;
     bool written_;
+    double start_time_;
 };

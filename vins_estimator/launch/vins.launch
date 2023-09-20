@@ -1,3 +1,7 @@
 <launch>
+  <arg name="use_sim_time" default="true"/>
   <node name="vins_estimator" pkg="vins" type="vins_node" output="screen" args="$(find vins)/../config/realsense_d435i/realsense_stereo_imu_config.yaml" />
+
+	<!-- <node pkg="tf" type="static_transform_publisher" name="world_pub" args=" 0.4263468735109386 -0.04632044158280395 1.0887671045613085 -3.0639330832225977 0.007851717958511636 0.00036341369108953183 vins world 100"/> -->
 </launch>
+

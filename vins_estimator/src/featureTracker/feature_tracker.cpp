@@ -51,7 +51,7 @@ FeatureTracker::FeatureTracker()
     n_id = 0;
     hasPrediction = false;
 
-    start_cnt_flag_ = false;
+    start_cnt_flag_ = true;
     end_cnt_flag_ = false;
     avg_tracked_ = 0.0;
     min_tracked_ = 1000;
@@ -459,9 +459,9 @@ void FeatureTracker::drawTrack(const cv::Mat &imLeft, const cv::Mat &imRight,
 {
     //int rows = imLeft.rows;
     int cols = imLeft.cols;
-    if (!imRight.empty() && stereo_cam)
-        cv::hconcat(imLeft, imRight, imTrack);
-    else
+    // if (!imRight.empty() && stereo_cam)
+    //     cv::hconcat(imLeft, imRight, imTrack);
+    // else
         imTrack = imLeft.clone();
     cv::cvtColor(imTrack, imTrack, cv::COLOR_GRAY2RGB);
 
@@ -477,6 +477,30 @@ void FeatureTracker::drawTrack(const cv::Mat &imLeft, const cv::Mat &imRight,
     }
 
     if(start_cnt_flag_ && !end_cnt_flag_){
+        // Write for plot
+        // if (start_time_ < 1e-4) {
+        //     start_time_ = ros::Time::now().toSec();
+        // }
+        // start_time_ = 1694701268.793281;
+        // static bool init_time_offset = false;
+        // static double time_offset = 0.0;
+        // if (!init_time_offset) {
+        //     time_offset = ros::Time::now().toSec() - start_time_;
+        //     init_time_offset = true;
+        // }
+        double cur_t = ros::Time::now().toSec() - start_time_ ;//- time_offset;
+        bool write_plot = true;
+        if (write_plot) {
+            std::ofstream ofs("/home/eason/output/feature_cnt_plot.txt",
+                                std::ios::app);
+            if (!ofs.is_open()) {
+                std::cerr << "Failed to open file: feature_cnt_plot_ours.txt" << std::endl;
+                return;
+            }
+            ofs << cur_t << "," << tracked_feature_cnt << std::endl;
+            ofs.close();
+        }
+
         if(tracked_feature_cnt < min_tracked_) 
             min_tracked_ = tracked_feature_cnt;
 
@@ -505,6 +529,7 @@ void FeatureTracker::drawTrack(const cv::Mat &imLeft, const cv::Mat &imRight,
         }
     }
 
+
     // if (!imRight.empty() && stereo_cam)
     // {
     //     for (size_t i = 0; i < curRightPts.size(); i++)
@@ -517,6 +542,7 @@ void FeatureTracker::drawTrack(const cv::Mat &imLeft, const cv::Mat &imRight,
     //     }
     // }
     
+    static int cnt = 0;
     map<int, cv::Point2f>::iterator mapIt;
     for (size_t i = 0; i < curLeftIds.size(); i++)
     {
@@ -527,11 +553,14 @@ void FeatureTracker::drawTrack(const cv::Mat &imLeft, const cv::Mat &imRight,
             if(track_cnt[i] >= 5) {
                 cv::Point2f rightPt = mapIt->second;
                 rightPt.x += cols;
-                cv::arrowedLine(imTrack, curLeftPts[i], rightPt, cv::Scalar(0, 255, 0), 1, 8, 0, 0.0);
+                // cv::arrowedLine(imTrack, curLeftPts[i], rightPt, cv::Scalar(0, 255, 0), 1, 8, 0, 0.0);
                 cv::circle(imTrack, rightPt, 2, cv::Scalar(0, 255, 0), 2);
             }
         }
     }
+    // cv::imwrite("/home/eason/output/icra2024" + std::to_string(cnt) + ".png", imTrack);
+    // cout << "write image " << cnt << endl;
+    // cnt++;
 
     //draw prediction
     /*

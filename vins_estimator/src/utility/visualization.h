@@ -30,6 +30,8 @@
 #include <std_msgs/Header.h>
 #include <tf/transform_broadcaster.h>
 #include <visualization_msgs/Marker.h>
+#include <visualization_msgs/MarkerArray.h>
+#include <fstream>
 
 extern ros::Publisher pub_odometry;
 extern ros::Publisher pub_path, pub_pose;
@@ -72,4 +74,6 @@ void pubRelocalization(const Estimator &estimator);
 void pubCar(const Estimator &estimator, const std_msgs::Header &header);
 
 void airsimPoseInitCallback(const nav_msgs::OdometryConstPtr &msg);
+
+void pubCsvPath(string csv_path);
 
