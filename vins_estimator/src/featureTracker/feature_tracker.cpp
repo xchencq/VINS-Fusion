@@ -475,18 +475,18 @@ void FeatureTracker::drawTrack(const cv::Mat &imLeft, const cv::Mat &imRight,
 
     if(start_cnt_flag_ && !end_cnt_flag_){
         // Write for plot
-        double cur_t = ros::Time::now().toSec() - start_time_;
-        bool write_plot = true;
-        if (write_plot) {
-            std::ofstream ofs("/home/cindy/Downloads/icra2024/benchmark/new_feature_plot_bmk_vel2.txt",
-                                std::ios::app);
-            if (!ofs.is_open()) {
-                std::cerr << "Failed to open file: feature_cnt_plot.txt" << std::endl;
-                return;
-            }
-            ofs << cur_t << "," << tracked_feature_cnt << std::endl;
-            ofs.close();
-        }
+        // double cur_t = ros::Time::now().toSec() - start_time_;
+        // bool write_plot = true;
+        // if (write_plot) {
+        //     std::ofstream ofs("/home/cindy/Downloads/icra2024/benchmark/new_feature_plot_bmk_vel2.txt",
+        //                         std::ios::app);
+        //     if (!ofs.is_open()) {
+        //         std::cerr << "Failed to open file: feature_cnt_plot.txt" << std::endl;
+        //         return;
+        //     }
+        //     ofs << cur_t << "," << tracked_feature_cnt << std::endl;
+        //     ofs.close();
+        // }
 
         if(tracked_feature_cnt < min_tracked_) 
             min_tracked_ = tracked_feature_cnt;
@@ -501,19 +501,19 @@ void FeatureTracker::drawTrack(const cv::Mat &imLeft, const cv::Mat &imRight,
         ROS_WARN_ONCE("min_tracked: %d", min_tracked_);
 
         // Write the evaluation result to txt
-        bool write_cumulative = false;
-        static bool writed = false;
-        if (write_cumulative && !writed) {
-            std::ofstream ofs("/home/cindy/Downloads/icra2024/pag/feature_cnt_pag_min5.txt",
-                                std::ios::app);
-            if (!ofs.is_open()) {
-                std::cerr << "Failed to open file: feature_cnt_cumulative.txt" << std::endl;
-                return;
-            }
-            ofs << "Avg: " << avg_tracked_ << ", Min: " << min_tracked_ << std::endl;
-            ofs.close();
-            writed = true;
-        }
+        // bool write_cumulative = false;
+        // static bool writed = false;
+        // if (write_cumulative && !writed) {
+        //     std::ofstream ofs("/home/cindy/Downloads/icra2024/pag/feature_cnt_pag_min5.txt",
+        //                         std::ios::app);
+        //     if (!ofs.is_open()) {
+        //         std::cerr << "Failed to open file: feature_cnt_cumulative.txt" << std::endl;
+        //         return;
+        //     }
+        //     ofs << "Avg: " << avg_tracked_ << ", Min: " << min_tracked_ << std::endl;
+        //     ofs.close();
+        //     writed = true;
+        // }
     }
 
     if (!imRight.empty() && stereo_cam)
